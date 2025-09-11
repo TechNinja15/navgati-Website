@@ -11,7 +11,8 @@ import { useToast } from "@/hooks/use-toast"
 
 // Mock bus data - in a real app, this would come from an API
 const busData = {
-  "KA01AB1234": {
+  "18": {
+    routeNumber: "18",
     busNumber: "KA01AB1234",
     route: "Electronic City - Majestic",
     city: "bangalore",
@@ -27,7 +28,8 @@ const busData = {
       "Majestic"
     ]
   },
-  "MH01CD5678": {
+  "42": {
+    routeNumber: "42",
     busNumber: "MH01CD5678",
     route: "Andheri - CST",
     city: "mumbai",
@@ -41,7 +43,8 @@ const busData = {
       "CST"
     ]
   },
-  "DL01EF9012": {
+  "65": {
+    routeNumber: "65",
     busNumber: "DL01EF9012",
     route: "Connaught Place - Dwarka",
     city: "delhi",
@@ -70,7 +73,7 @@ const cities = [
 
 const TrackPage = () => {
   const [selectedCity, setSelectedCity] = useState("")
-  const [busNumber, setBusNumber] = useState("")
+  const [routeNumber, setRouteNumber] = useState("")
   const [searchResult, setSearchResult] = useState<any>(null)
   const [isSearched, setIsSearched] = useState(false)
   const navigate = useNavigate()
@@ -86,29 +89,29 @@ const TrackPage = () => {
       return
     }
     
-    if (!busNumber.trim()) {
+    if (!routeNumber.trim()) {
       toast({
-        title: "Bus Number Required",
-        description: "Please enter a bus number to search.",
+        title: "Route Number Required",
+        description: "Please enter a route number to search.",
         variant: "destructive"
       })
       return
     }
 
     setIsSearched(true)
-    const foundBus = busData[busNumber.toUpperCase()]
+    const foundBus = busData[routeNumber]
     
     if (foundBus && foundBus.city === selectedCity) {
       setSearchResult(foundBus)
       toast({
         title: "Bus Found!",
-        description: `Found bus ${foundBus.busNumber} on route ${foundBus.route}`,
+        description: `Found route ${foundBus.routeNumber} - Bus ${foundBus.busNumber}`,
       })
     } else {
       setSearchResult(null)
       toast({
         title: "No Bus Found",
-        description: "No bus found with the provided number in the selected city.",
+        description: "No bus found with the provided route number in the selected city.",
         variant: "destructive"
       })
     }
@@ -116,7 +119,7 @@ const TrackPage = () => {
 
   const handleTrackBus = () => {
     if (searchResult) {
-      navigate(`/bus-tracking/${searchResult.busNumber}`)
+      navigate(`/bus-tracking/${searchResult.routeNumber}`)
     }
   }
 
@@ -167,11 +170,11 @@ const TrackPage = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Bus Number</label>
+                  <label className="text-sm font-medium">Route Number</label>
                   <Input
-                    placeholder="Enter bus number (e.g., KA01AB1234)"
-                    value={busNumber}
-                    onChange={(e) => setBusNumber(e.target.value)}
+                    placeholder="Enter route number (e.g., 18, 42, 65)"
+                    value={routeNumber}
+                    onChange={(e) => setRouteNumber(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   />
                 </div>
@@ -203,7 +206,7 @@ const TrackPage = () => {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                           <h3 className="text-xl font-semibold text-primary mb-2">
-                            Bus {searchResult.busNumber}
+                            Route {searchResult.routeNumber} - Bus {searchResult.busNumber}
                           </h3>
                           <p className="text-muted-foreground mb-1">
                             Route: {searchResult.route}
@@ -226,8 +229,8 @@ const TrackPage = () => {
                     </div>
                     <h3 className="text-lg font-medium mb-2">No Bus Found</h3>
                     <p className="text-muted-foreground">
-                      No bus was found with the number "{busNumber}" in {cities.find(c => c.value === selectedCity)?.label}.
-                      Please check the bus number and try again.
+                      No bus was found with route number "{routeNumber}" in {cities.find(c => c.value === selectedCity)?.label}.
+                      Please check the route number and try again.
                     </p>
                   </div>
                 )}

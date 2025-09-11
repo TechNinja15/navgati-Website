@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils"
 
 // Mock bus data - same as in track.tsx
 const busData = {
-  "KA01AB1234": {
+  "18": {
+    routeNumber: "18",
     busNumber: "KA01AB1234",
     route: "Electronic City - Majestic",
     city: "bangalore",
@@ -27,7 +28,8 @@ const busData = {
     ],
     estimatedTimes: ["12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45"]
   },
-  "MH01CD5678": {
+  "42": {
+    routeNumber: "42",
     busNumber: "MH01CD5678",
     route: "Andheri - CST",
     city: "mumbai",
@@ -42,7 +44,8 @@ const busData = {
     ],
     estimatedTimes: ["09:00", "09:20", "09:40", "10:00", "10:20", "10:40"]
   },
-  "DL01EF9012": {
+  "65": {
+    routeNumber: "65",
     busNumber: "DL01EF9012",
     route: "Connaught Place - Dwarka",
     city: "delhi",
@@ -62,14 +65,14 @@ const busData = {
 }
 
 const BusTrackingPage = () => {
-  const { busNumber } = useParams()
+  const { busNumber: routeNumber } = useParams()
   const navigate = useNavigate()
   const [busInfo, setBusInfo] = useState<any>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
-    if (busNumber && busData[busNumber as keyof typeof busData]) {
-      setBusInfo(busData[busNumber as keyof typeof busData])
+    if (routeNumber && busData[routeNumber as keyof typeof busData]) {
+      setBusInfo(busData[routeNumber as keyof typeof busData])
     }
 
     const timer = setInterval(() => {
@@ -77,7 +80,7 @@ const BusTrackingPage = () => {
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [busNumber])
+  }, [routeNumber])
 
   const handleViewOnMap = () => {
     if (busInfo) {
@@ -95,7 +98,7 @@ const BusTrackingPage = () => {
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Bus Not Found</h1>
             <p className="text-muted-foreground mb-6">
-              The bus number "{busNumber}" was not found in our system.
+              The route number "{routeNumber}" was not found in our system.
             </p>
             <Button onClick={() => navigate('/track')}>
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -125,7 +128,7 @@ const BusTrackingPage = () => {
             </Button>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Bus {busInfo.busNumber}
+                Route {busInfo.routeNumber} - Bus {busInfo.busNumber}
               </h1>
               <p className="text-muted-foreground">{busInfo.route}</p>
             </div>
@@ -238,7 +241,7 @@ const BusTrackingPage = () => {
               <div className="text-center space-y-4">
                 <h3 className="text-lg font-medium">Get Detailed Location</h3>
                 <p className="text-muted-foreground">
-                  View the exact location of bus {busInfo.busNumber} on Google Maps
+                  View the exact location of Route {busInfo.routeNumber} (Bus {busInfo.busNumber}) on Google Maps
                 </p>
                 <Button onClick={handleViewOnMap} size="lg" className="w-full md:w-auto">
                   <ExternalLink className="w-4 h-4 mr-2" />
