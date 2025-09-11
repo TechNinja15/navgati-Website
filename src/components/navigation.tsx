@@ -11,6 +11,7 @@ export function Navigation() {
 
   const navigation = [
     { name: "Home", href: "/" },
+    { name: "Track", href: "/track" },
     { name: "Report Issue", href: "/complaints" },
     { name: "Download App", href: "/download" },
   ]

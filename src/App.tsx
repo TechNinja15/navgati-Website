@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import TrackPage from "./pages/track";
+import BusTrackingPage from "./pages/bus-tracking";
 import Complaints from "./pages/complaints";
 import DownloadPage from "./pages/download";
 import NotFound from "./pages/NotFound";
@@ -20,6 +22,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/track" element={<TrackPage />} />
+            <Route path="/bus-tracking/:busNumber" element={<BusTrackingPage />} />
             <Route path="/complaints" element={<Complaints />} />
             <Route path="/download" element={<DownloadPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
