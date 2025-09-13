@@ -258,9 +258,21 @@ const BusTrackingPage = () => {
 
   const handleViewOnMap = () => {
     if (busInfo) {
-      const location = `${busInfo.stops[busInfo.currentStop]}, ${busInfo.city}, India`
-      const query = encodeURIComponent(location)
-      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`
+      // Create a directions URL showing the complete bus route
+      const origin = encodeURIComponent(`${busInfo.stops[0]}, ${busInfo.city}, India`)
+      const destination = encodeURIComponent(`${busInfo.stops[busInfo.stops.length - 1]}, ${busInfo.city}, India`)
+      
+      // Add all intermediate stops as waypoints (excluding first and last)
+      const waypoints = busInfo.stops.slice(1, -1)
+        .map((stop: string) => encodeURIComponent(`${stop}, ${busInfo.city}, India`))
+        .join('/')
+      
+      // Construct Google Maps directions URL with waypoints
+      let googleMapsUrl = `https://www.google.com/maps/dir/${origin}`
+      if (waypoints) {
+        googleMapsUrl += `/${waypoints}`
+      }
+      googleMapsUrl += `/${destination}`
       
       // Try to open in new tab, fallback to same tab if blocked
       const newWindow = window.open(googleMapsUrl, '_blank', 'noopener,noreferrer')
