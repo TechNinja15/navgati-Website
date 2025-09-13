@@ -258,9 +258,16 @@ const BusTrackingPage = () => {
 
   const handleViewOnMap = () => {
     if (busInfo) {
-      const query = encodeURIComponent(`${busInfo.stops[busInfo.currentStop]}, ${busInfo.city}`)
+      const location = `${busInfo.stops[busInfo.currentStop]}, ${busInfo.city}, India`
+      const query = encodeURIComponent(location)
       const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`
-      window.open(googleMapsUrl, '_blank')
+      
+      // Try to open in new tab, fallback to same tab if blocked
+      const newWindow = window.open(googleMapsUrl, '_blank', 'noopener,noreferrer')
+      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+        // Popup blocked, open in same tab
+        window.location.href = googleMapsUrl
+      }
     }
   }
 
