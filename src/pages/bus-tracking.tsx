@@ -61,6 +61,180 @@ const busData = {
       "Dwarka"
     ],
     estimatedTimes: ["14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45"]
+  },
+  // Punjab Routes
+  "1": {
+    routeNumber: "1",
+    busNumber: "PB01AS2345",
+    route: "Amritsar Route",
+    city: "punjab",
+    currentStop: 3,
+    stops: [
+      "Amritsar ISBT",
+      "Hall Gate",
+      "Alpha One Mall",
+      "Guru Nanak Dev University (GNDU)",
+      "Chheharta",
+      "Verka",
+      "Attari Road",
+      "Jalandhar Road",
+      "Ranjit Avenue",
+      "Khasa"
+    ],
+    estimatedTimes: ["08:00", "08:12", "08:25", "08:40", "08:55", "09:10", "09:25", "09:40", "09:55", "10:10"]
+  },
+  "2": {
+    routeNumber: "2",
+    busNumber: "PB02LD3456",
+    route: "Ludhiana Route",
+    city: "punjab",
+    currentStop: 2,
+    stops: [
+      "Amar Shaheed Sukdev Interstate Bus Terminal",
+      "Sherpur Chowk",
+      "Focal Point",
+      "Madhuban",
+      "Punjabi Mata Nagar Chowk",
+      "Khalsa College"
+    ],
+    estimatedTimes: ["10:00", "10:15", "10:30", "10:45", "11:00", "11:15"]
+  },
+  "3": {
+    routeNumber: "3",
+    busNumber: "PB03JL4567",
+    route: "Jalandhar Route",
+    city: "punjab",
+    currentStop: 1,
+    stops: [
+      "Saheed Bhagat Singh Interstate Bus Terminal",
+      "PAP Chowk",
+      "Rama Mandi Chowk",
+      "Chandpur",
+      "Patara",
+      "Khalsa College"
+    ],
+    estimatedTimes: ["11:00", "11:12", "11:25", "11:40", "11:55", "12:10"]
+  },
+  "4": {
+    routeNumber: "4",
+    busNumber: "PB04PT5678",
+    route: "Patiala Route",
+    city: "punjab",
+    currentStop: 4,
+    stops: [
+      "Patiala Bus Stand",
+      "Sanauri Adda",
+      "Sama Chungi",
+      "Punjabi University",
+      "Bhagwanpur",
+      "Power Colony",
+      "Model Town",
+      "Rajbaha Road"
+    ],
+    estimatedTimes: ["13:00", "13:10", "13:20", "13:35", "13:50", "14:05", "14:20", "14:35"]
+  },
+  "5": {
+    routeNumber: "5",
+    busNumber: "PB05BT6789",
+    route: "Bathinda Route",
+    city: "punjab",
+    currentStop: 3,
+    stops: [
+      "Bathinda Bus Stand",
+      "Ganpati Tower",
+      "Amarpura Bus Stop – In Adarsh Nagar",
+      "Old Bus Stand",
+      "PRTC Workshop",
+      "Partap Nagar",
+      "Ambuja Bus Stop – In Partap Nagar"
+    ],
+    estimatedTimes: ["15:00", "15:12", "15:25", "15:40", "15:55", "16:10", "16:25"]
+  },
+  // Raipur Routes
+  "6": {
+    routeNumber: "6",
+    busNumber: "CG01RP7890",
+    route: "Raipur Bus Stand - Telibandha",
+    city: "raipur",
+    currentStop: 2,
+    stops: [
+      "Raipur Bus Stand",
+      "Jaistambh Chowk",
+      "Pandri",
+      "Marine Drive",
+      "Telibandha Stadium",
+      "Energy Park",
+      "Telibandha"
+    ],
+    estimatedTimes: ["07:00", "07:15", "07:30", "07:45", "08:00", "08:15", "08:30"]
+  },
+  "7": {
+    routeNumber: "7",
+    busNumber: "CG02RP8901",
+    route: "New Market - Shankar Nagar",
+    city: "raipur",
+    currentStop: 4,
+    stops: [
+      "New Market",
+      "Gol Bazaar",
+      "Civil Lines",
+      "VIP Road",
+      "Shankar Nagar",
+      "Byron Bazaar",
+      "Moudhapara",
+      "Tatibandh"
+    ],
+    estimatedTimes: ["09:00", "09:10", "09:20", "09:35", "09:50", "10:05", "10:20", "10:35"]
+  },
+  "8": {
+    routeNumber: "8",
+    busNumber: "CG03RP9012",
+    route: "Railway Station - GE Road",
+    city: "raipur",
+    currentStop: 1,
+    stops: [
+      "Raipur Railway Station",
+      "Fafadih",
+      "Gudhiyari",
+      "Kota",
+      "GE Road",
+      "Devendra Nagar"
+    ],
+    estimatedTimes: ["11:00", "11:15", "11:30", "11:45", "12:00", "12:15"]
+  },
+  "9": {
+    routeNumber: "9",
+    busNumber: "CG04RP0123",
+    route: "Magneto Mall - Ring Road",
+    city: "raipur",
+    currentStop: 3,
+    stops: [
+      "Magneto Mall",
+      "City Mall 36",
+      "Avanti Vihar",
+      "Daldal Seoni",
+      "Ring Road No. 1",
+      "Priyadarshini Nagar",
+      "Amlidih"
+    ],
+    estimatedTimes: ["13:00", "13:12", "13:25", "13:40", "13:55", "14:10", "14:25"]
+  },
+  "10": {
+    routeNumber: "10",
+    busNumber: "CG05RP1234",
+    route: "Pandri - Mowa",
+    city: "raipur",
+    currentStop: 5,
+    stops: [
+      "Pandri",
+      "Samta Colony",
+      "Sarona",
+      "Bhatagaon",
+      "Urla",
+      "Sejbahar",
+      "Mowa"
+    ],
+    estimatedTimes: ["16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30"]
   }
 }
 

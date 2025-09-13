@@ -59,6 +59,170 @@ const busData = {
       "Dwarka Sector 21",
       "Dwarka"
     ]
+  },
+  // Punjab Routes
+  "1": {
+    routeNumber: "1",
+    busNumber: "PB01AS2345",
+    route: "Amritsar Route",
+    city: "punjab",
+    currentStop: 3,
+    stops: [
+      "Amritsar ISBT",
+      "Hall Gate",
+      "Alpha One Mall",
+      "Guru Nanak Dev University (GNDU)",
+      "Chheharta",
+      "Verka",
+      "Attari Road",
+      "Jalandhar Road",
+      "Ranjit Avenue",
+      "Khasa"
+    ]
+  },
+  "2": {
+    routeNumber: "2",
+    busNumber: "PB02LD3456",
+    route: "Ludhiana Route",
+    city: "punjab",
+    currentStop: 2,
+    stops: [
+      "Amar Shaheed Sukdev Interstate Bus Terminal",
+      "Sherpur Chowk",
+      "Focal Point",
+      "Madhuban",
+      "Punjabi Mata Nagar Chowk",
+      "Khalsa College"
+    ]
+  },
+  "3": {
+    routeNumber: "3",
+    busNumber: "PB03JL4567",
+    route: "Jalandhar Route",
+    city: "punjab",
+    currentStop: 1,
+    stops: [
+      "Saheed Bhagat Singh Interstate Bus Terminal",
+      "PAP Chowk",
+      "Rama Mandi Chowk",
+      "Chandpur",
+      "Patara",
+      "Khalsa College"
+    ]
+  },
+  "4": {
+    routeNumber: "4",
+    busNumber: "PB04PT5678",
+    route: "Patiala Route",
+    city: "punjab",
+    currentStop: 4,
+    stops: [
+      "Patiala Bus Stand",
+      "Sanauri Adda",
+      "Sama Chungi",
+      "Punjabi University",
+      "Bhagwanpur",
+      "Power Colony",
+      "Model Town",
+      "Rajbaha Road"
+    ]
+  },
+  "5": {
+    routeNumber: "5",
+    busNumber: "PB05BT6789",
+    route: "Bathinda Route",
+    city: "punjab",
+    currentStop: 3,
+    stops: [
+      "Bathinda Bus Stand",
+      "Ganpati Tower",
+      "Amarpura Bus Stop – In Adarsh Nagar",
+      "Old Bus Stand",
+      "PRTC Workshop",
+      "Partap Nagar",
+      "Ambuja Bus Stop – In Partap Nagar"
+    ]
+  },
+  // Raipur Routes
+  "6": {
+    routeNumber: "6",
+    busNumber: "CG01RP7890",
+    route: "Raipur Bus Stand - Telibandha",
+    city: "raipur",
+    currentStop: 2,
+    stops: [
+      "Raipur Bus Stand",
+      "Jaistambh Chowk",
+      "Pandri",
+      "Marine Drive",
+      "Telibandha Stadium",
+      "Energy Park",
+      "Telibandha"
+    ]
+  },
+  "7": {
+    routeNumber: "7",
+    busNumber: "CG02RP8901",
+    route: "New Market - Shankar Nagar",
+    city: "raipur",
+    currentStop: 4,
+    stops: [
+      "New Market",
+      "Gol Bazaar",
+      "Civil Lines",
+      "VIP Road",
+      "Shankar Nagar",
+      "Byron Bazaar",
+      "Moudhapara",
+      "Tatibandh"
+    ]
+  },
+  "8": {
+    routeNumber: "8",
+    busNumber: "CG03RP9012",
+    route: "Railway Station - GE Road",
+    city: "raipur",
+    currentStop: 1,
+    stops: [
+      "Raipur Railway Station",
+      "Fafadih",
+      "Gudhiyari",
+      "Kota",
+      "GE Road",
+      "Devendra Nagar"
+    ]
+  },
+  "9": {
+    routeNumber: "9",
+    busNumber: "CG04RP0123",
+    route: "Magneto Mall - Ring Road",
+    city: "raipur",
+    currentStop: 3,
+    stops: [
+      "Magneto Mall",
+      "City Mall 36",
+      "Avanti Vihar",
+      "Daldal Seoni",
+      "Ring Road No. 1",
+      "Priyadarshini Nagar",
+      "Amlidih"
+    ]
+  },
+  "10": {
+    routeNumber: "10",
+    busNumber: "CG05RP1234",
+    route: "Pandri - Mowa",
+    city: "raipur",
+    currentStop: 5,
+    stops: [
+      "Pandri",
+      "Samta Colony",
+      "Sarona",
+      "Bhatagaon",
+      "Urla",
+      "Sejbahar",
+      "Mowa"
+    ]
   }
 }
 
@@ -68,7 +232,9 @@ const cities = [
   { value: "delhi", label: "Delhi" },
   { value: "chennai", label: "Chennai" },
   { value: "pune", label: "Pune" },
-  { value: "hyderabad", label: "Hyderabad" }
+  { value: "hyderabad", label: "Hyderabad" },
+  { value: "punjab", label: "Punjab" },
+  { value: "raipur", label: "Raipur" }
 ]
 
 const TrackPage = () => {
