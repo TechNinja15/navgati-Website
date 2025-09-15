@@ -1,19 +1,36 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Bus } from "lucide-react"
+import { Menu, X, Bus, Languages } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useLanguage } from "@/contexts/LanguageContext"
 import { cn } from "@/lib/utils"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
+  const { language, setLanguage, t } = useLanguage()
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Track", href: "/track" },
-    { name: "Report Issue", href: "/complaints" },
-    { name: "Download App", href: "/download" },
+    { name: "home", href: "/" },
+    { name: "track", href: "/track" },
+    { name: "reportIssue", href: "/complaints" },
+    { name: "downloadApp", href: "/download" },
+  ]
+
+  const languages = [
+    { code: 'en' as const, name: 'english', flag: '🇮🇳' },
+    { code: 'hi' as const, name: 'hindi', flag: '🇮🇳' },
+    { code: 'pa' as const, name: 'punjabi', flag: '🇮🇳' },
+    { code: 'ta' as const, name: 'tamil', flag: '🇮🇳' },
+    { code: 'te' as const, name: 'telugu', flag: '🇮🇳' },
+    { code: 'bn' as const, name: 'bengali', flag: '🇮🇳' },
   ]
 
   const isActive = (href: string) => location.pathname === href
@@ -47,14 +64,65 @@ export function Navigation() {
                     : "text-foreground"
                 )}
               >
-                {item.name}
+                {t(item.name)}
               </Link>
             ))}
+            
+            {/* Language Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 px-2">
+                  <Languages className="h-4 w-4 mr-1" />
+                  <span className="text-xs">{languages.find(l => l.code === language)?.flag}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-popover border shadow-medium">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                    className={cn(
+                      "flex items-center justify-between cursor-pointer",
+                      language === lang.code && "bg-accent"
+                    )}
+                  >
+                    <span>{t(lang.name)}</span>
+                    <span>{lang.flag}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
+            {/* Mobile Language Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 px-2">
+                  <Languages className="h-4 w-4 mr-1" />
+                  <span className="text-xs">{languages.find(l => l.code === language)?.flag}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-popover border shadow-medium">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                    className={cn(
+                      "flex items-center justify-between cursor-pointer",
+                      language === lang.code && "bg-accent"
+                    )}
+                  >
+                    <span>{t(lang.name)}</span>
+                    <span>{lang.flag}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <ThemeToggle />
             <Button
               variant="ghost"
@@ -82,7 +150,7 @@ export function Navigation() {
                   )}
                   onClick={() => setIsOpen(false)}
                 >
-                  {item.name}
+                  {t(item.name)}
                 </Link>
               ))}
             </div>
