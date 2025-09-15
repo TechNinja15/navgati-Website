@@ -10,73 +10,75 @@ import {
   Accessibility
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-
-const features = [
-  {
-    icon: MapPin,
-    title: "Real-time Bus Tracking",
-    description: "Track buses live on interactive maps with precise GPS locations and estimated arrival times.",
-    color: "text-primary"
-  },
-  {
-    icon: Clock,
-    title: "Smart Schedules",
-    description: "Access complete timetables, plan your journey, and receive timely notifications.",
-    color: "text-accent"
-  },
-  {
-    icon: Smartphone,
-    title: "Route Information",
-    description: "Complete route details, stops, and connections to help you navigate the transport network.",
-    color: "text-secondary-foreground"
-  },
-  {
-    icon: Moon,
-    title: "Dark & Light Mode",
-    description: "Seamlessly switch between themes for comfortable viewing in any lighting condition.",
-    color: "text-primary"
-  },
-  {
-    icon: Zap,
-    title: "Lightning Fast",
-    description: "Optimized for speed and low bandwidth usage, perfect for all network conditions.",
-    color: "text-accent"
-  },
-  {
-    icon: Accessibility,
-    title: "Accessible Design",
-    description: "Built with accessibility in mind, ensuring everyone can use public transport effectively.",
-    color: "text-secondary-foreground"
-  },
-  {
-    icon: Shield,
-    title: "Privacy First",
-    description: "Your data is protected with industry-standard security and privacy measures.",
-    color: "text-primary"
-  },
-  {
-    icon: Users,
-    title: "Community Driven",
-    description: "Help improve the service by reporting issues and sharing feedback with the community.",
-    color: "text-accent"
-  }
-]
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Features() {
+  const { t } = useLanguage()
+  
+  const features = [
+    {
+      icon: MapPin,
+      title: t('realTimeBusTracking'),
+      description: t('realTimeBusTrackingDesc'),
+      color: "text-primary"
+    },
+    {
+      icon: Clock,
+      title: t('smartSchedules'),
+     description: t('smartSchedulesDesc'),
+      color: "text-accent"
+    },
+    {
+      icon: Smartphone,
+      title: t('routeInformationTitle'),
+      description: t('routeInformationDesc'),
+      color: "text-secondary-foreground"
+    },
+    {
+      icon: Moon,
+      title: t('darkLightMode'),
+      description: t('darkLightModeDesc'),
+      color: "text-primary"
+    },
+    {
+      icon: Zap,
+      title: t('lightningFast'),
+      description: t('lightningFastDesc'),
+      color: "text-accent"
+    },
+    {
+      icon: Accessibility,
+      title: t('accessibleDesign'),
+      description: t('accessibleDesignDesc'),
+      color: "text-secondary-foreground"
+    },
+    {
+      icon: Shield,
+      title: t('privacyFirst'),
+      description: t('privacyFirstDesc'),
+      color: "text-primary"
+    },
+    {
+      icon: Users,
+      title: t('communityDriven'),
+      description: t('communityDrivenDesc'),
+      color: "text-accent"
+    }
+  ]
+
   return (
     <section className="py-24 bg-gradient-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Everything You Need for
+            {t('featuresTitle1')}
             <span className="block bg-gradient-primary bg-clip-text text-transparent">
-              Smarter Commuting
+              {t('featuresTitle2')}
             </span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            NavGati combines cutting-edge technology with user-friendly design to revolutionize 
-            your public transport experience.
+            {t('featuresSubtitle')}
           </p>
         </div>
 

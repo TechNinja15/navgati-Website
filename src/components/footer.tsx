@@ -1,7 +1,10 @@
 import { Bus, Mail, Phone, MapPin, ExternalLink } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Footer() {
+  const { t } = useLanguage()
+  
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -17,28 +20,27 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              NexGen Accessible Vehicle Guidance and Tracking Intelligence - 
-              Revolutionizing public transport with smart technology.
+              {t('navGatiTagline')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Quick Links</h3>
+            <h3 className="font-semibold text-lg">{t('quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
-                  Home
+                  {t('home')}
                 </Link>
               </li>
               <li>
                 <Link to="/download" className="text-muted-foreground hover:text-primary transition-colors">
-                  Download App
+                  {t('downloadApp')}
                 </Link>
               </li>
               <li>
                 <Link to="/complaints" className="text-muted-foreground hover:text-primary transition-colors">
-                  Report Issue
+                  {t('reportIssue')}
                 </Link>
               </li>
             </ul>
@@ -46,7 +48,7 @@ export function Footer() {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Contact</h3>
+            <h3 className="font-semibold text-lg">{t('contact')}</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4 text-primary" />
@@ -65,18 +67,18 @@ export function Footer() {
 
           {/* Transport Authority */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Transport Authority</h3>
+            <h3 className="font-semibold text-lg">{t('transportAuthority')}</h3>
             <a 
               href="https://morth.nic.in/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
             >
-              <span>Ministry of Road Transport & Highways</span>
+              <span>{t('ministryName')}</span>
               <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
             <p className="text-xs text-muted-foreground">
-              Official government initiative for digital public transport services.
+              {t('govInitiative')}
             </p>
           </div>
         </div>
@@ -85,17 +87,17 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-muted-foreground">
-              © 2025 NavGati. All rights reserved. A Digital India Initiative.
+              {t('copyrightText')}
             </p>
             <div className="flex space-x-6 text-sm">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                Privacy Policy
+                {t('privacyPolicy')}
               </a>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                Terms of Service
+                {t('termsOfService')}
               </a>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                Accessibility
+                {t('accessibility')}
               </a>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Search, Bus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Mock bus data - in a real app, this would come from an API
 const busData = {
@@ -244,12 +245,13 @@ const TrackPage = () => {
   const [isSearched, setIsSearched] = useState(false)
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { t } = useLanguage()
 
   const handleSearch = () => {
     if (!selectedCity) {
       toast({
-        title: "City Required",
-        description: "Please select a city first.",
+        title: t('cityRequired'),
+        description: t('cityRequiredDesc'),
         variant: "destructive"
       })
       return
@@ -257,8 +259,8 @@ const TrackPage = () => {
     
     if (!routeNumber.trim()) {
       toast({
-        title: "Route Number Required",
-        description: "Please enter a route number to search.",
+        title: t('routeNumberRequired'),
+        description: t('routeNumberRequiredDesc'),
         variant: "destructive"
       })
       return
@@ -270,14 +272,15 @@ const TrackPage = () => {
     if (foundBus && foundBus.city === selectedCity) {
       setSearchResult(foundBus)
       toast({
-        title: "Bus Found!",
-        description: `Found route ${foundBus.routeNumber} - Bus ${foundBus.busNumber}`,
+        title: t('busFound'),
+        description: t('busFoundDesc').replace('{routeNumber}', foundBus.routeNumber).replace('{busNumber}', foundBus.busNumber),
       })
     } else {
       setSearchResult(null)
+      const selectedCityName = cities.find(c => c.value === selectedCity)?.label || selectedCity
       toast({
-        title: "No Bus Found",
-        description: "No bus found with the provided route number in the selected city.",
+        title: t('noBusFound'),
+        description: t('noBusFoundDesc').replace('{routeNumber}', routeNumber).replace('{city}', selectedCityName),
         variant: "destructive"
       })
     }
@@ -300,10 +303,10 @@ const TrackPage = () => {
               <MapPin className="w-8 h-8 text-primary-foreground" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
-              Track Your Bus
+              {t('trackYourBus')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Enter your city and bus number to get real-time location updates and route information.
+              {t('trackSubtitle')}
             </p>
           </div>
 
