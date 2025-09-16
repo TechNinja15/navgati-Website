@@ -33,24 +33,11 @@ export default function Complaints() {
     setIsSubmitting(true)
     
     try {
-      // Check if user is authenticated
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session) {
-        toast({
-          title: "Authentication Required",
-          description: "Please log in to submit a complaint.",
-          variant: "destructive"
-        })
-        setIsSubmitting(false)
-        return
-      }
-
-      // Insert data into report_issue table
+      // Insert data into report_issue table (no authentication required)
       const { error } = await supabase
         .from('report_issue')
         .insert({
-          user_id: session.user.id,
+          user_id: '00000000-0000-0000-0000-000000000000', // Default anonymous user
           title: `Bus ${formData.busNumber} - Route ${formData.routeNumber}`,
           description: formData.complaint,
           category: 'transport',
