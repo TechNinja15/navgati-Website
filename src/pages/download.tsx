@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import appScreenshot from "@/assets/navgati-app-screenshot.jpg"
 
 export default function DownloadPage() {
   return (
@@ -41,7 +42,14 @@ export default function DownloadPage() {
                   <Button 
                     size="lg"
                     className="bg-gradient-primary hover:shadow-large transition-spring group"
-                    onClick={() => window.open("https://play.google.com", "_blank")}
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = '/navgati-app.apk';
+                      link.download = 'navgati-app.apk';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
                   >
                     <Download className="w-5 h-5 mr-2 group-hover:translate-y-1 transition-transform" />
                     Download for Android
@@ -122,9 +130,13 @@ export default function DownloadPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Screenshots placeholder */}
-                  <div className="aspect-[9/16] bg-muted rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">App Screenshots</p>
+                  {/* App Screenshot */}
+                  <div className="aspect-[9/16] bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src={appScreenshot} 
+                      alt="NavGati app screenshot showing real-time bus tracking interface"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
                   {/* System Requirements */}
