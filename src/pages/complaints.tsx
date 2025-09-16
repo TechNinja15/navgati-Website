@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { supabase } from "@/integrations/supabase/client"
 
 export default function Complaints() {
   const { toast } = useToast()
@@ -17,7 +18,9 @@ export default function Complaints() {
     name: "",
     busNumber: "",
     routeNumber: "",
-    complaint: ""
+    complaint: "",
+    email: "",
+    phone: ""
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,15 +32,66 @@ export default function Complaints() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to submit a complaint.",
+          variant: "destructive"
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Insert data into report_issue table
+      const { error } = await supabase
+        .from('report_issue')
+        .insert({
+          user_id: session.user.id,
+          title: `Bus ${formData.busNumber} - Route ${formData.routeNumber}`,
+          description: formData.complaint,
+          category: 'transport',
+          priority: 'medium',
+          status: 'open',
+          location: `Bus Route ${formData.routeNumber}`,
+          contact_email: formData.email || null,
+          contact_phone: formData.phone || null
+        })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        toast({
+          title: "Submission Failed",
+          description: "There was an error submitting your complaint. Please try again.",
+          variant: "destructive"
+        })
+      } else {
+        toast({
+          title: "Complaint Submitted Successfully",
+          description: "Thank you for your feedback. We'll review your complaint shortly.",
+        })
+        setFormData({ 
+          name: "", 
+          busNumber: "", 
+          routeNumber: "", 
+          complaint: "",
+          email: "",
+          phone: ""
+        })
+      }
+    } catch (error) {
+      console.error('Error submitting complaint:', error)
       toast({
-        title: "Complaint Submitted",
-        description: "Thank you for your feedback. We'll review your complaint shortly.",
+        title: "Submission Failed",
+        description: "There was an unexpected error. Please try again.",
+        variant: "destructive"
       })
-      setFormData({ name: "", busNumber: "", routeNumber: "", complaint: "" })
+    } finally {
       setIsSubmitting(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -109,6 +163,31 @@ export default function Complaints() {
                           value={formData.routeNumber}
                           onChange={handleInputChange}
                           required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email (Optional)</Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="your.email@example.com"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone (Optional)</Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+91 98765 43210"
+                          value={formData.phone}
+                          onChange={handleInputChange}
                         />
                       </div>
                     </div>
