@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Search, Bus } from "lucide-react"
+import { MapPin, Search, Bus, Compass, Share2, Send } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { supabase } from "@/integrations/supabase/client"
 
 // Mock bus data - in a real app, this would come from an API
 const busData = {
@@ -243,6 +244,17 @@ const TrackPage = () => {
   const [routeNumber, setRouteNumber] = useState("")
   const [searchResult, setSearchResult] = useState<any>(null)
   const [isSearched, setIsSearched] = useState(false)
+  
+  // Offline tracking states
+  const [offlineSelectedCity, setOfflineSelectedCity] = useState("")
+  const [offlineRouteNumber, setOfflineRouteNumber] = useState("")
+  const [offlineSearchResult, setOfflineSearchResult] = useState<any>(null)
+  const [showCoordinates, setShowCoordinates] = useState(false)
+  const [showPhoneInput, setShowPhoneInput] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [isOfflineSearched, setIsOfflineSearched] = useState(false)
+  const [isSendingSMS, setIsSendingSMS] = useState(false)
+  
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useLanguage()
@@ -289,6 +301,132 @@ const TrackPage = () => {
   const handleTrackBus = () => {
     if (searchResult) {
       navigate(`/bus-tracking/${searchResult.routeNumber}`)
+    }
+  }
+
+  // Offline tracking functions
+  const handleOfflineSearch = () => {
+    if (!offlineSelectedCity) {
+      toast({
+        title: "City Required",
+        description: "Please select a city to search for buses",
+        variant: "destructive"
+      })
+      return
+    }
+    
+    if (!offlineRouteNumber.trim()) {
+      toast({
+        title: "Route Number Required", 
+        description: "Please enter a route number to search",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsOfflineSearched(true)
+    const foundBus = busData[offlineRouteNumber]
+    
+    if (foundBus && foundBus.city === offlineSelectedCity) {
+      setOfflineSearchResult(foundBus)
+      setShowCoordinates(false)
+      setShowPhoneInput(false)
+      toast({
+        title: "Bus Found",
+        description: `Found bus ${foundBus.busNumber} on route ${foundBus.routeNumber}`,
+      })
+    } else {
+      setOfflineSearchResult(null)
+      setShowCoordinates(false)
+      setShowPhoneInput(false)
+      const selectedCityName = cities.find(c => c.value === offlineSelectedCity)?.label || offlineSelectedCity
+      toast({
+        title: "No Bus Found",
+        description: `No bus found with route ${offlineRouteNumber} in ${selectedCityName}`,
+        variant: "destructive"
+      })
+    }
+  }
+
+  const handleGiveCoordinates = () => {
+    if (offlineSearchResult) {
+      setShowCoordinates(true)
+      toast({
+        title: "Coordinates Retrieved",
+        description: "Bus coordinates are now available",
+      })
+    }
+  }
+
+  const handleSendLocation = () => {
+    setShowPhoneInput(true)
+  }
+
+  const handleSendSMS = async () => {
+    if (!phoneNumber.trim()) {
+      toast({
+        title: "Phone Number Required",
+        description: "Please enter a phone number to send the location",
+        variant: "destructive"
+      })
+      return
+    }
+
+    if (!offlineSearchResult) {
+      toast({
+        title: "No Bus Data",
+        description: "Please search for a bus first",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsSendingSMS(true)
+
+    try {
+      // Generate mock coordinates based on current stop
+      const coordinates = {
+        lat: 12.9716 + (Math.random() - 0.5) * 0.1,
+        lng: 77.5946 + (Math.random() - 0.5) * 0.1
+      }
+
+      const nextStops = offlineSearchResult.stops.slice(offlineSearchResult.currentStop + 1)
+      
+      const { data, error } = await supabase.functions.invoke('send-sms', {
+        body: {
+          phoneNumber: phoneNumber,
+          busData: {
+            routeNumber: offlineSearchResult.routeNumber,
+            busNumber: offlineSearchResult.busNumber,
+            city: cities.find(c => c.value === offlineSearchResult.city)?.label || offlineSearchResult.city,
+            route: offlineSearchResult.route,
+            currentStop: offlineSearchResult.stops[offlineSearchResult.currentStop],
+            nextStops: nextStops,
+            coordinates: coordinates
+          }
+        }
+      })
+
+      if (error) {
+        throw error
+      }
+
+      toast({
+        title: "SMS Sent Successfully",
+        description: `Location details sent to ${phoneNumber}`,
+      })
+      
+      setPhoneNumber("")
+      setShowPhoneInput(false)
+    } catch (error: any) {
+      console.error('Error sending SMS:', error)
+      toast({
+        title: "Failed to Send SMS",
+        description: error.message || "An error occurred while sending the SMS",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSendingSMS(false)
     }
   }
 
@@ -356,6 +494,157 @@ const TrackPage = () => {
                 <Search className="w-4 h-4 mr-2" />
                 Search Bus
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Track Offline Section */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Compass className="w-5 h-5" />
+                Track Offline
+              </CardTitle>
+              <CardDescription>
+                Get bus coordinates and share location via SMS without internet tracking
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select City</label>
+                  <Select value={offlineSelectedCity} onValueChange={setOfflineSelectedCity}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose your city" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.value} value={city.value}>
+                          {city.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Route Number</label>
+                  <Input
+                    placeholder="Enter route number (e.g., 18, 42, 65)"
+                    value={offlineRouteNumber}
+                    onChange={(e) => setOfflineRouteNumber(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleOfflineSearch()}
+                  />
+                </div>
+              </div>
+              <Button 
+                onClick={handleOfflineSearch} 
+                className="w-full md:w-auto"
+                size="lg"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Search Bus (Offline)
+              </Button>
+
+              {/* Offline Search Results */}
+              {isOfflineSearched && offlineSearchResult && (
+                <div className="mt-6 space-y-4">
+                  <div className="bg-muted/50 rounded-lg p-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                      <div>
+                        <h3 className="text-xl font-semibold text-primary mb-2">
+                          Route {offlineSearchResult.routeNumber} - Bus {offlineSearchResult.busNumber}
+                        </h3>
+                        <p className="text-muted-foreground mb-1">
+                          Route: {offlineSearchResult.route}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Currently at: {offlineSearchResult.stops[offlineSearchResult.currentStop]}
+                        </p>
+                      </div>
+                      <Button onClick={handleGiveCoordinates} size="lg" variant="outline">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Give Coordinates
+                      </Button>
+                    </div>
+
+                    {/* Coordinates Display */}
+                    {showCoordinates && (
+                      <div className="bg-background rounded-lg p-4 mb-4">
+                        <h4 className="font-semibold mb-2 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          Bus Coordinates
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium">Latitude:</span> {(12.9716 + (Math.random() - 0.5) * 0.1).toFixed(6)}
+                          </div>
+                          <div>
+                            <span className="font-medium">Longitude:</span> {(77.5946 + (Math.random() - 0.5) * 0.1).toFixed(6)}
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button onClick={handleSendLocation} variant="default">
+                            <Share2 className="w-4 h-4 mr-2" />
+                            Send Location
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Phone Input */}
+                    {showPhoneInput && (
+                      <div className="bg-background rounded-lg p-4">
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <Send className="w-4 h-4" />
+                          Send SMS with Bus Location
+                        </h4>
+                        <div className="flex gap-3">
+                          <Input
+                            placeholder="Enter mobile number (e.g., +1234567890)"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSendSMS()}
+                            className="flex-1"
+                          />
+                          <Button 
+                            onClick={handleSendSMS} 
+                            disabled={isSendingSMS}
+                            className="shrink-0"
+                          >
+                            {isSendingSMS ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-background border-t-transparent rounded-full animate-spin mr-2" />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Send className="w-4 h-4 mr-2" />
+                                Send SMS
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          SMS will include bus location, route details, and upcoming stops
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* No Bus Found Message for Offline */}
+              {isOfflineSearched && !offlineSearchResult && (
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-full mb-4">
+                    <Bus className="w-6 h-6 text-destructive" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">No Bus Found</h3>
+                  <p className="text-muted-foreground">
+                    No bus was found with route number "{offlineRouteNumber}" in {cities.find(c => c.value === offlineSelectedCity)?.label}.
+                    Please check the route number and try again.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
