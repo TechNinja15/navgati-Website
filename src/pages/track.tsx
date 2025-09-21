@@ -19,6 +19,8 @@ const busData = {
     route: "Electronic City - Majestic",
     city: "bangalore",
     currentStop: 4,
+    availableSeats: 15,
+    totalSeats: 45,
     stops: [
       "Electronic City Phase 1",
       "Bommanahalli",
@@ -36,6 +38,8 @@ const busData = {
     route: "Andheri - CST",
     city: "mumbai",
     currentStop: 2,
+    availableSeats: 8,
+    totalSeats: 40,
     stops: [
       "Andheri Station",
       "Bandra",
@@ -51,6 +55,8 @@ const busData = {
     route: "Connaught Place - Dwarka",
     city: "delhi",
     currentStop: 6,
+    availableSeats: 22,
+    totalSeats: 50,
     stops: [
       "Connaught Place",
       "Rajouri Garden",
@@ -88,6 +94,8 @@ const busData = {
     route: "Ludhiana Route",
     city: "punjab",
     currentStop: 2,
+    availableSeats: 6,
+    totalSeats: 42,
     stops: [
       "Amar Shaheed Sukdev Interstate Bus Terminal",
       "Sherpur Chowk",
@@ -103,6 +111,8 @@ const busData = {
     route: "Jalandhar Route",
     city: "punjab",
     currentStop: 1,
+    availableSeats: 18,
+    totalSeats: 44,
     stops: [
       "Saheed Bhagat Singh Interstate Bus Terminal",
       "PAP Chowk",
@@ -118,6 +128,8 @@ const busData = {
     route: "Patiala Route",
     city: "punjab",
     currentStop: 4,
+    availableSeats: 25,
+    totalSeats: 46,
     stops: [
       "Patiala Bus Stand",
       "Sanauri Adda",
@@ -135,6 +147,8 @@ const busData = {
     route: "Bathinda Route",
     city: "punjab",
     currentStop: 3,
+    availableSeats: 14,
+    totalSeats: 40,
     stops: [
       "Bathinda Bus Stand",
       "Ganpati Tower",
@@ -152,6 +166,8 @@ const busData = {
     route: "Raipur Bus Stand - Telibandha",
     city: "raipur",
     currentStop: 2,
+    availableSeats: 30,
+    totalSeats: 52,
     stops: [
       "Raipur Bus Stand",
       "Jaistambh Chowk",
@@ -168,6 +184,8 @@ const busData = {
     route: "New Market - Shankar Nagar",
     city: "raipur",
     currentStop: 4,
+    availableSeats: 9,
+    totalSeats: 48,
     stops: [
       "New Market",
       "Gol Bazaar",
@@ -185,6 +203,8 @@ const busData = {
     route: "Railway Station - GE Road",
     city: "raipur",
     currentStop: 1,
+    availableSeats: 20,
+    totalSeats: 45,
     stops: [
       "Raipur Railway Station",
       "Fafadih",
@@ -200,6 +220,8 @@ const busData = {
     route: "Magneto Mall - Ring Road",
     city: "raipur",
     currentStop: 3,
+    availableSeats: 3,
+    totalSeats: 42,
     stops: [
       "Magneto Mall",
       "City Mall 36",
@@ -216,6 +238,8 @@ const busData = {
     route: "Pandri - Mowa",
     city: "raipur",
     currentStop: 5,
+    availableSeats: 16,
+    totalSeats: 50,
     stops: [
       "Pandri",
       "Samta Colony",
@@ -556,8 +580,11 @@ const TrackPage = () => {
                         <p className="text-muted-foreground mb-1">
                           Route: {offlineSearchResult.route}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground mb-1">
                           Currently at: {offlineSearchResult.stops[offlineSearchResult.currentStop]}
+                        </p>
+                        <p className="text-sm font-medium text-primary">
+                          Seats: {offlineSearchResult.availableSeats}/{offlineSearchResult.totalSeats}
                         </p>
                       </div>
                       <Button onClick={handleGiveCoordinates} size="lg" variant="outline">
@@ -669,8 +696,11 @@ const TrackPage = () => {
                           <p className="text-muted-foreground mb-1">
                             Route: {searchResult.route}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-muted-foreground mb-1">
                             Currently at: {searchResult.stops[searchResult.currentStop]}
+                          </p>
+                          <p className="text-sm font-medium text-primary">
+                            Seats: {searchResult.availableSeats}/{searchResult.totalSeats}
                           </p>
                         </div>
                         <Button onClick={handleTrackBus} size="lg">
