@@ -599,7 +599,7 @@ const TrackPage = () => {
                         </h4>
                         <div className="flex gap-3">
                           <Input
-                            placeholder="Enter mobile number (e.g., +1234567890)"
+                            placeholder="Enter mobile number (e.g., 9876543210 or +919876543210)"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSendSMS()}
@@ -624,7 +624,7 @@ const TrackPage = () => {
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-2">
-                          SMS will include bus location, route details, and upcoming stops
+                          SMS will include bus location, route details, and upcoming stops. Enter Indian number without country code or with +91.
                         </p>
                       </div>
                     )}

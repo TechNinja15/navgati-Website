@@ -31,15 +31,28 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    if (!twilioAccountSid || !twilioAuthToken) {
-      throw new Error('Twilio credentials not configured');
-    }
+    const accountSid = 'AC0b9c5d05d1dcc2d00b2ae3d60357f9c4';
+    const authToken = '02a793a1db44bc0ac1c33d2a2cd6d30d';
 
     const { phoneNumber, busData }: SMSRequest = await req.json();
 
     if (!phoneNumber || !busData) {
       throw new Error('Phone number and bus data are required');
     }
+
+    // Format phone number to ensure it has country code
+    let formattedPhoneNumber = phoneNumber.trim();
+    
+    // If phone number doesn't start with +, assume it's an Indian number and add +91
+    if (!formattedPhoneNumber.startsWith('+')) {
+      // Remove any leading 0 if present
+      if (formattedPhoneNumber.startsWith('0')) {
+        formattedPhoneNumber = formattedPhoneNumber.substring(1);
+      }
+      formattedPhoneNumber = '+91' + formattedPhoneNumber;
+    }
+
+    console.log('Formatted phone number:', formattedPhoneNumber);
 
     // Format the SMS message
     const message = `🚌 NavGati Bus Location Update
@@ -57,16 +70,16 @@ Track your bus with NavGati! 🚍`;
 
     // Send SMS using Twilio API
     const response = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`,
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
       {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${btoa(`${twilioAccountSid}:${twilioAuthToken}`)}`,
+          'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          From: '+1234567890', // Replace with your Twilio phone number
-          To: phoneNumber,
+          From: '+15005550006', // Twilio test number
+          To: formattedPhoneNumber,
           Body: message,
         }),
       }
