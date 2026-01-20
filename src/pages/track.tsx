@@ -264,11 +264,16 @@ const cities = [
 ]
 
 const TrackPage = () => {
+  const [userRole, setUserRole] = useState<'none' | 'passenger' | 'admin'>('none')
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+  // Search states
   const [selectedCity, setSelectedCity] = useState("")
   const [routeNumber, setRouteNumber] = useState("")
   const [searchResult, setSearchResult] = useState<any>(null)
   const [isSearched, setIsSearched] = useState(false)
-  
+
   // Offline tracking states
   const [offlineSelectedCity, setOfflineSelectedCity] = useState("")
   const [offlineRouteNumber, setOfflineRouteNumber] = useState("")
@@ -278,10 +283,34 @@ const TrackPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [isOfflineSearched, setIsOfflineSearched] = useState(false)
   const [isSendingSMS, setIsSendingSMS] = useState(false)
-  
+
   const navigate = useNavigate()
   const { toast } = useToast()
   const { t } = useLanguage()
+
+  const handleLogin = () => {
+    if (username && password) {
+      setUserRole('admin')
+      toast({
+        title: "Login Successful",
+        description: "Welcome back, Admin!",
+      })
+    } else {
+      toast({
+        title: "Invalid Credentials",
+        description: "Please enter both User ID and Password",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const handlePassengerLogin = () => {
+    setUserRole('passenger')
+    toast({
+      title: "Welcome Passenger",
+      description: "You have access to bus search features.",
+    })
+  }
 
   const handleSearch = () => {
     if (!selectedCity) {
@@ -292,7 +321,7 @@ const TrackPage = () => {
       })
       return
     }
-    
+
     if (!routeNumber.trim()) {
       toast({
         title: t('routeNumberRequired'),
@@ -303,8 +332,8 @@ const TrackPage = () => {
     }
 
     setIsSearched(true)
-    const foundBus = busData[routeNumber]
-    
+    const foundBus = busData[routeNumber as keyof typeof busData]
+
     if (foundBus && foundBus.city === selectedCity) {
       setSearchResult(foundBus)
       toast({
@@ -338,10 +367,10 @@ const TrackPage = () => {
       })
       return
     }
-    
+
     if (!offlineRouteNumber.trim()) {
       toast({
-        title: "Route Number Required", 
+        title: "Route Number Required",
         description: "Please enter a route number to search",
         variant: "destructive"
       })
@@ -349,8 +378,8 @@ const TrackPage = () => {
     }
 
     setIsOfflineSearched(true)
-    const foundBus = busData[offlineRouteNumber]
-    
+    const foundBus = busData[offlineRouteNumber as keyof typeof busData]
+
     if (foundBus && foundBus.city === offlineSelectedCity) {
       setOfflineSearchResult(foundBus)
       setShowCoordinates(false)
@@ -415,7 +444,7 @@ const TrackPage = () => {
       }
 
       const nextStops = offlineSearchResult.stops.slice(offlineSearchResult.currentStop + 1)
-      
+
       const { data, error } = await supabase.functions.invoke('send-sms', {
         body: {
           phoneNumber: phoneNumber,
@@ -439,7 +468,7 @@ const TrackPage = () => {
         title: "SMS Sent Successfully",
         description: `Location details sent to ${phoneNumber}`,
       })
-      
+
       setPhoneNumber("")
       setShowPhoneInput(false)
     } catch (error: any) {
@@ -461,10 +490,10 @@ const TrackPage = () => {
         <div className="max-w-4xl mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-full mb-4 shadow-soft">
               <MapPin className="w-8 h-8 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+            <h1 className="text-4xl font-heading font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
               {t('trackYourBus')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -472,225 +501,287 @@ const TrackPage = () => {
             </p>
           </div>
 
-          {/* Search Form */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Search className="w-5 h-5" />
-                Search Bus
-              </CardTitle>
-              <CardDescription>
-                Select your city and enter the bus number to track its location
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Select City</label>
-                  <Select value={selectedCity} onValueChange={setSelectedCity}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose your city" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city.value} value={city.value}>
-                          {city.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+          {/* Login Card */}
+          {userRole === 'none' && (
+            <Card className="max-w-md mx-auto shadow-medium border-primary/10">
+              <CardHeader className="text-center space-y-2">
+                <CardTitle className="text-2xl font-heading">Login Required</CardTitle>
+                <CardDescription>
+                  Please login to access advanced tracking features or continue as a passenger.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">User ID</label>
+                    <Input
+                      placeholder="Enter User ID"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Password</label>
+                    <Input
+                      type="password"
+                      placeholder="Enter Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    className="w-full bg-gradient-primary shadow-soft hover:shadow-medium transition-all"
+                    onClick={handleLogin}
+                  >
+                    Login as Admin
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Route Number</label>
-                  <Input
-                    placeholder="Enter route number (e.g., 18, 42, 65)"
-                    value={routeNumber}
-                    onChange={(e) => setRouteNumber(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                </div>
-              </div>
-              <Button 
-                onClick={handleSearch} 
-                className="w-full md:w-auto"
-                size="lg"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Search Bus
-              </Button>
-            </CardContent>
-          </Card>
 
-          {/* Track Offline Section */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Compass className="w-5 h-5" />
-                Track Offline
-              </CardTitle>
-              <CardDescription>
-                Get bus coordinates and share location via SMS without internet tracking
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Select City</label>
-                  <Select value={offlineSelectedCity} onValueChange={setOfflineSelectedCity}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose your city" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city.value} value={city.value}>
-                          {city.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Route Number</label>
-                  <Input
-                    placeholder="Enter route number (e.g., 18, 42, 65)"
-                    value={offlineRouteNumber}
-                    onChange={(e) => setOfflineRouteNumber(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleOfflineSearch()}
-                  />
-                </div>
-              </div>
-              <Button 
-                onClick={handleOfflineSearch} 
-                className="w-full md:w-auto"
-                size="lg"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Search Bus (Offline)
-              </Button>
-
-              {/* Offline Search Results */}
-              {isOfflineSearched && offlineSearchResult && (
-                <div className="mt-6 space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                      <div>
-                        <h3 className="text-xl font-semibold text-primary mb-2">
-                          Route {offlineSearchResult.routeNumber} - Bus {offlineSearchResult.busNumber}
-                        </h3>
-                        <p className="text-muted-foreground mb-1">
-                          Route: {offlineSearchResult.route}
-                        </p>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          Currently at: {offlineSearchResult.stops[offlineSearchResult.currentStop]}
-                        </p>
-                        <p className="text-sm font-medium text-primary">
-                          Seats: {offlineSearchResult.availableSeats}/{offlineSearchResult.totalSeats}
-                        </p>
-                      </div>
-                      <Button onClick={handleGiveCoordinates} size="lg" variant="outline">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        Give Coordinates
-                      </Button>
-                    </div>
-
-                    {/* Coordinates Display */}
-                    {showCoordinates && (
-                      <div className="bg-background rounded-lg p-4 mb-4">
-                        <h4 className="font-semibold mb-2 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Bus Coordinates
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium">Latitude:</span> {(12.9716 + (Math.random() - 0.5) * 0.1).toFixed(6)}
-                          </div>
-                          <div>
-                            <span className="font-medium">Longitude:</span> {(77.5946 + (Math.random() - 0.5) * 0.1).toFixed(6)}
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <Button onClick={handleSendLocation} variant="default">
-                            <Share2 className="w-4 h-4 mr-2" />
-                            Send Location
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Phone Input */}
-                    {showPhoneInput && (
-                      <div className="bg-background rounded-lg p-4">
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Send className="w-4 h-4" />
-                          Send SMS with Bus Location
-                        </h4>
-                        <div className="flex gap-3">
-                          <Input
-                            placeholder="Enter mobile number (e.g., 9876543210 or +919876543210)"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSendSMS()}
-                            className="flex-1"
-                          />
-                          <Button 
-                            onClick={handleSendSMS} 
-                            disabled={isSendingSMS}
-                            className="shrink-0"
-                          >
-                            {isSendingSMS ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-background border-t-transparent rounded-full animate-spin mr-2" />
-                                Sending...
-                              </>
-                            ) : (
-                              <>
-                                <Send className="w-4 h-4 mr-2" />
-                                Send SMS
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          SMS will include bus location, route details, and upcoming stops. Enter Indian number without country code or with +91.
-                        </p>
-                      </div>
-                    )}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">Or continue as</span>
                   </div>
                 </div>
-              )}
 
-              {/* No Bus Found Message for Offline */}
-              {isOfflineSearched && !offlineSearchResult && (
-                <div className="text-center py-8">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-full mb-4">
-                    <Bus className="w-6 h-6 text-destructive" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">No Bus Found</h3>
-                  <p className="text-muted-foreground">
-                    No bus was found with route number "{offlineRouteNumber}" in {cities.find(c => c.value === offlineSelectedCity)?.label}.
-                    Please check the route number and try again.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                <Button
+                  variant="outline"
+                  className="w-full border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
+                  onClick={handlePassengerLogin}
+                >
+                  <Bus className="w-4 h-4 mr-2" />
+                  Passenger
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
-          {/* Search Results */}
-          {isSearched && (
-            <Card>
+          {/* Search Form - Visible to ALL authenticated users */}
+          {userRole !== 'none' && (
+            <Card className="mb-8 shadow-soft border-primary/10">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bus className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 font-heading">
+                  <Search className="w-5 h-5 text-primary" />
+                  Search Bus
+                </CardTitle>
+                <CardDescription>
+                  Select your city and enter the bus number to track its location
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Select City</label>
+                    <Select value={selectedCity} onValueChange={setSelectedCity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose your city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((city) => (
+                          <SelectItem key={city.value} value={city.value}>
+                            {city.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Route Number</label>
+                    <Input
+                      placeholder="Enter route number (e.g., 18, 42, 65)"
+                      value={routeNumber}
+                      onChange={(e) => setRouteNumber(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={handleSearch}
+                  className="w-full md:w-auto bg-gradient-primary hover:shadow-lg transition-all"
+                  size="lg"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  Search Bus
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Track Offline - Visible ONLY to ADMINS */}
+          {userRole === 'admin' && (
+            <Card className="mb-8 shadow-soft border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-heading">
+                  <Compass className="w-5 h-5 text-accent" />
+                  Track Offline
+                </CardTitle>
+                <CardDescription>
+                  Get bus coordinates and share location via SMS without internet tracking
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Select City</label>
+                    <Select value={offlineSelectedCity} onValueChange={setOfflineSelectedCity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose your city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((city) => (
+                          <SelectItem key={city.value} value={city.value}>
+                            {city.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Route Number</label>
+                    <Input
+                      placeholder="Enter route number (e.g., 18, 42, 65)"
+                      value={offlineRouteNumber}
+                      onChange={(e) => setOfflineRouteNumber(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleOfflineSearch()}
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={handleOfflineSearch}
+                  className="w-full md:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-all"
+                  size="lg"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  Search Bus (Offline)
+                </Button>
+
+                {/* Offline Search Results */}
+                {isOfflineSearched && offlineSearchResult && (
+                  <div className="mt-6 space-y-4">
+                    <div className="bg-muted/50 rounded-lg p-6 border border-border/50">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                        <div>
+                          <h3 className="text-xl font-heading font-semibold text-primary mb-2">
+                            Route {offlineSearchResult.routeNumber} - Bus {offlineSearchResult.busNumber}
+                          </h3>
+                          <p className="text-muted-foreground mb-1">
+                            Route: {offlineSearchResult.route}
+                          </p>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            Currently at: {offlineSearchResult.stops[offlineSearchResult.currentStop]}
+                          </p>
+                          <p className="text-sm font-medium text-primary">
+                            Seats: {offlineSearchResult.availableSeats}/{offlineSearchResult.totalSeats}
+                          </p>
+                        </div>
+                        <Button onClick={handleGiveCoordinates} size="lg" variant="outline" className="border-primary/20 hover:bg-primary/5">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          Give Coordinates
+                        </Button>
+                      </div>
+
+                      {/* Coordinates Display */}
+                      {showCoordinates && (
+                        <div className="bg-background rounded-lg p-4 mb-4 border border-border shadow-sm">
+                          <h4 className="font-semibold mb-2 flex items-center gap-2 text-primary">
+                            <MapPin className="w-4 h-4" />
+                            Bus Coordinates
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div className="p-3 bg-muted rounded-md">
+                              <span className="font-medium block text-xs text-muted-foreground uppercase">Latitude</span>
+                              <span className="font-mono text-lg">{(12.9716 + (Math.random() - 0.5) * 0.1).toFixed(6)}</span>
+                            </div>
+                            <div className="p-3 bg-muted rounded-md">
+                              <span className="font-medium block text-xs text-muted-foreground uppercase">Longitude</span>
+                              <span className="font-mono text-lg">{(77.5946 + (Math.random() - 0.5) * 0.1).toFixed(6)}</span>
+                            </div>
+                          </div>
+                          <div className="mt-4">
+                            <Button onClick={handleSendLocation} variant="default" className="bg-gradient-primary">
+                              <Share2 className="w-4 h-4 mr-2" />
+                              Send Location
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Phone Input */}
+                      {showPhoneInput && (
+                        <div className="bg-background rounded-lg p-4 border border-border shadow-sm">
+                          <h4 className="font-semibold mb-3 flex items-center gap-2 text-primary">
+                            <Send className="w-4 h-4" />
+                            Send SMS with Bus Location
+                          </h4>
+                          <div className="flex gap-3">
+                            <Input
+                              placeholder="Enter mobile number"
+                              value={phoneNumber}
+                              onChange={(e) => setPhoneNumber(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSendSMS()}
+                              className="flex-1"
+                            />
+                            <Button
+                              onClick={handleSendSMS}
+                              disabled={isSendingSMS}
+                              className="shrink-0 bg-gradient-primary"
+                            >
+                              {isSendingSMS ? (
+                                <>
+                                  <div className="w-4 h-4 border-2 border-background border-t-transparent rounded-full animate-spin mr-2" />
+                                  Sending...
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="w-4 h-4 mr-2" />
+                                  Send SMS
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            SMS will include bus location, route details, and upcoming stops.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* No Bus Found Message for Offline */}
+                {isOfflineSearched && !offlineSearchResult && (
+                  <div className="text-center py-8">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-full mb-4">
+                      <Bus className="w-6 h-6 text-destructive" />
+                    </div>
+                    <h3 className="text-lg font-medium mb-2">No Bus Found</h3>
+                    <p className="text-muted-foreground">
+                      No bus was found with route number "{offlineRouteNumber}" in {cities.find(c => c.value === offlineSelectedCity)?.label}.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Search Results - Visible to ALL authenticated users */}
+          {userRole !== 'none' && isSearched && (
+            <Card className="shadow-soft border-primary/10 transition-all duration-300 animate-accordion-down">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-heading">
+                  <Bus className="w-5 h-5 text-primary" />
                   Search Results
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {searchResult ? (
                   <div className="space-y-6">
-                    <div className="bg-muted/50 rounded-lg p-6">
+                    <div className="bg-muted/50 rounded-lg p-6 border border-border/50">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                          <h3 className="text-xl font-semibold text-primary mb-2">
+                          <h3 className="text-xl font-heading font-semibold text-primary mb-2">
                             Route {searchResult.routeNumber} - Bus {searchResult.busNumber}
                           </h3>
                           <p className="text-muted-foreground mb-1">
@@ -703,7 +794,7 @@ const TrackPage = () => {
                             Seats: {searchResult.availableSeats}/{searchResult.totalSeats}
                           </p>
                         </div>
-                        <Button onClick={handleTrackBus} size="lg">
+                        <Button onClick={handleTrackBus} size="lg" className="bg-gradient-primary hover:shadow-lg transition-all">
                           <MapPin className="w-4 h-4 mr-2" />
                           Track Bus
                         </Button>
@@ -718,7 +809,6 @@ const TrackPage = () => {
                     <h3 className="text-lg font-medium mb-2">No Bus Found</h3>
                     <p className="text-muted-foreground">
                       No bus was found with route number "{routeNumber}" in {cities.find(c => c.value === selectedCity)?.label}.
-                      Please check the route number and try again.
                     </p>
                   </div>
                 )}
