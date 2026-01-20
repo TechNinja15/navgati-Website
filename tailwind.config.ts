@@ -82,7 +82,8 @@ export default {
         spring: "var(--transition-spring)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
+        heading: ["Outfit", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       borderRadius: {
