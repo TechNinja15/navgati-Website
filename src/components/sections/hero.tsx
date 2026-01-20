@@ -5,12 +5,12 @@ import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Hero() {
   const { t } = useLanguage()
-  
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-hero opacity-10" />
-      
+
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="space-y-8">
@@ -21,9 +21,9 @@ export function Hero() {
           </div>
 
           {/* Main heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight">
-            <span className="block">{t('heroTitle1')}</span>
-            <span className="block bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold tracking-tight leading-tight">
+            <span className="block text-foreground">{t('heroTitle1')}</span>
+            <span className="block bg-gradient-hero bg-clip-text text-transparent pb-2">
               {t('heroTitle2')}
             </span>
           </h1>
@@ -34,15 +34,15 @@ export function Hero() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link to="/download">
-              <Button size="lg" className="bg-gradient-primary hover:shadow-large transition-spring group">
+              <Button size="lg" className="bg-gradient-primary hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 group px-8 h-12 rounded-full text-base">
                 {t('downloadApp')}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link to="/complaints">
-              <Button variant="outline" size="lg" className="hover:shadow-medium transition-spring">
+              <Button variant="outline" size="lg" className="hover:shadow-medium transition-all duration-300 px-8 h-12 rounded-full text-base border-primary/20 hover:border-primary/50 hover:bg-secondary/5">
                 {t('reportIssue')}
               </Button>
             </Link>
