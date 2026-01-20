@@ -36,38 +36,38 @@ export function Navigation() {
   const isActive = (href: string) => location.pathname === href
 
   return (
-    <nav className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
+    <nav className="bg-background/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 group">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-spring">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-spring shadow-soft">
                 <Bus className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
+              <span className="font-heading font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
                 NavGati
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
                   isActive(item.href)
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-foreground"
+                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {t(item.name)}
               </Link>
             ))}
-            
+
             {/* Language Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -92,7 +92,7 @@ export function Navigation() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <ThemeToggle />
           </div>
 
@@ -122,7 +122,7 @@ export function Navigation() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <ThemeToggle />
             <Button
               variant="ghost"
