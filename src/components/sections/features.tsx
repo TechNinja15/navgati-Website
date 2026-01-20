@@ -1,9 +1,9 @@
-import { 
-  Smartphone, 
-  Zap, 
-  Users, 
-  Shield, 
-  MapPin, 
+import {
+  Smartphone,
+  Zap,
+  Users,
+  Shield,
+  MapPin,
   Clock,
   Moon,
   Sun,
@@ -14,7 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Features() {
   const { t } = useLanguage()
-  
+
   const features = [
     {
       icon: MapPin,
@@ -25,7 +25,7 @@ export function Features() {
     {
       icon: Clock,
       title: t('smartSchedules'),
-     description: t('smartSchedulesDesc'),
+      description: t('smartSchedulesDesc'),
       color: "text-accent"
     },
     {
@@ -87,15 +87,15 @@ export function Features() {
           {features.map((feature, index) => {
             const Icon = feature.icon
             return (
-              <Card 
-                key={index} 
-                className="bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-soft transition-spring group"
+              <Card
+                key={index}
+                className="bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-300 group"
               >
                 <CardContent className="p-6 text-center space-y-4">
-                  <div className={`inline-flex w-12 h-12 rounded-lg bg-muted/50 items-center justify-center group-hover:scale-110 transition-spring ${feature.color}`}>
-                    <Icon className="w-6 h-6" />
+                  <div className={`inline-flex w-14 h-14 rounded-2xl bg-muted/50 items-center justify-center group-hover:scale-110 group-hover:bg-background shadow-sm transition-all duration-300 ${feature.color}`}>
+                    <Icon className="w-7 h-7" />
                   </div>
-                  <h3 className="font-semibold text-lg">{feature.title}</h3>
+                  <h3 className="font-heading font-semibold text-xl">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {feature.description}
                   </p>
