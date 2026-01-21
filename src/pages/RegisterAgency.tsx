@@ -19,6 +19,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 interface BusRoute {
     id: number;
     stops: string[];
+    plateNumber: string;
 }
 
 const RegisterAgency = () => {
@@ -46,7 +47,7 @@ const RegisterAgency = () => {
             const newRoutes = [...prev];
             if (count > newRoutes.length) {
                 for (let i = newRoutes.length; i < count; i++) {
-                    newRoutes.push({ id: i + 1, stops: [] });
+                    newRoutes.push({ id: i + 1, stops: [], plateNumber: "" });
                 }
             } else {
                 newRoutes.length = count;
@@ -71,18 +72,79 @@ const RegisterAgency = () => {
         });
     };
 
+    const updatePlateNumber = (routeIndex: number, value: string) => {
+        setBusRoutes((prev) => {
+            const newRoutes = [...prev];
+            newRoutes[routeIndex].plateNumber = value.toUpperCase();
+            return newRoutes;
+        });
+    };
+
+    const generateCredentials = (plateNumber: string, index: number) => {
+        // Generate Route ID: RT-[CityPrefix]-[Random3]
+        const cityPrefix = formData.city ? formData.city.substring(0, 3).toUpperCase() : "BUS";
+        // Generate exactly 3 digits (100-999)
+        const randomRoute = Math.floor(100 + Math.random() * 900);
+        const routeId = `RT-${cityPrefix}-${randomRoute}`;
+
+        // Generate User ID: DRV-[PlateNumber] or DRV-[Random]
+        // Cleaning plate number to use in ID
+        const cleanPlate = plateNumber ? plateNumber.replace(/[^a-zA-Z0-9]/g, '').toUpperCase() : `BUS${index + 1}`;
+        const userId = `DRV-${cleanPlate}`;
+
+        // Generate Password: Random 8 char alphanumeric
+        const password = Math.random().toString(36).slice(-8);
+
+        return { routeId, userId, password };
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Agency Registration Data:", { ...formData, busRoutes });
+
+        // Validation: Check if all buses have a plate number
+        const missingPlates = busRoutes.some(route => !route.plateNumber || route.plateNumber.trim() === "");
+        if (missingPlates) {
+            toast({
+                title: "Validation Error",
+                description: "Please enter the bus number plate for all buses before registering.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        // Process each bus route to generate credentials
+        const registeredBuses = busRoutes.map((route, index) => {
+            const credentials = generateCredentials(route.plateNumber, index);
+            return {
+                ...route,
+                ...credentials
+            };
+        });
+
+        const registrationData = {
+            ...formData,
+            registeredBuses
+        };
+
+        console.log("Agency Registration Complete:");
+        console.log(JSON.stringify(registrationData, null, 2));
+
+        // Create a summary for the toast
+        // Create a summary for the toast
+        const credentialSummary = registeredBuses.map(b =>
+            `Bus ${b.plateNumber || b.id}: ID=${b.userId}, Pass=${b.password}`
+        ).join('\n');
 
         toast({
             title: "Registration Successful",
-            description: "Your agency and routes have been registered.",
+            description: "Redirecting to success page...",
+            duration: 2000,
         });
 
+        // Navigate to success page
         setTimeout(() => {
-            navigate("/");
-        }, 1500);
+            navigate("/registration-success", { state: registrationData });
+        }, 1000);
     };
 
     return (
@@ -194,6 +256,8 @@ const RegisterAgency = () => {
                                                 onAddStop={(stop) => addStop(index, stop)}
                                                 onRemoveStop={(stopIndex) => removeStop(index, stopIndex)}
                                                 city={formData.city} // Pass selected city for filtering
+                                                plateNumber={route.plateNumber}
+                                                onPlateNumberChange={(value) => updatePlateNumber(index, value)}
                                             />
                                         </ErrorBoundary>
                                     </div>
