@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, X, Loader2 } from "lucide-react";
+import { Search, MapPin, X, Loader2, Bus } from "lucide-react";
 
 // Fix for default Leaflet markers in React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -20,6 +20,8 @@ interface LeafletMapBuilderProps {
     onAddStop: (stop: string) => void;
     onRemoveStop: (index: number) => void;
     city?: string;
+    plateNumber?: string;
+    onPlateNumberChange?: (value: string) => void;
 }
 
 interface StopData {
@@ -75,7 +77,7 @@ const MapClickHandler = ({ onLocationFound }: { onLocationFound: (data: { name: 
     return null;
 };
 
-const LeafletMapBuilder = ({ stops, onAddStop, onRemoveStop, city = "" }: LeafletMapBuilderProps) => {
+const LeafletMapBuilder = ({ stops, onAddStop, onRemoveStop, city = "", plateNumber = "", onPlateNumberChange }: LeafletMapBuilderProps) => {
     const [query, setQuery] = useState("");
     const [isSearching, setIsSearching] = useState(false);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -224,6 +226,22 @@ const LeafletMapBuilder = ({ stops, onAddStop, onRemoveStop, city = "" }: Leafle
                     {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : "Add"}
                 </Button>
             </div>
+
+            {/* Bus Number Plate Input */}
+            {onPlateNumberChange && (
+                <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <Bus className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                        <Input
+                            value={plateNumber}
+                            onChange={(e) => onPlateNumberChange(e.target.value)}
+                            placeholder="Bus Number (e.g. CG04AD1234)"
+                            className="pl-9 font-mono uppercase"
+                            maxLength={10}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Map Container */}
             <div className="relative w-full h-[300px] rounded-md border overflow-hidden bg-muted/20 z-0">
