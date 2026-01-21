@@ -11,6 +11,7 @@ import BusTrackingPage from "./pages/bus-tracking";
 import Complaints from "./pages/complaints";
 import DownloadPage from "./pages/download";
 import RegisterAgency from "./pages/RegisterAgency";
+import RegistrationSuccess from "./pages/RegistrationSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/complaints" element={<Complaints />} />
               <Route path="/download" element={<DownloadPage />} />
               <Route path="/register-agency" element={<RegisterAgency />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
