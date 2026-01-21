@@ -46,6 +46,11 @@ export function Hero() {
                 {t('reportIssue')}
               </Button>
             </Link>
+            <Link to="/register-agency">
+              <Button variant="ghost" size="lg" className="hover:shadow-medium transition-all duration-300 px-8 h-12 rounded-full text-base text-muted-foreground hover:text-foreground hover:bg-secondary/10">
+                Register as Agency
+              </Button>
+            </Link>
           </div>
 
           {/* Feature highlights */}

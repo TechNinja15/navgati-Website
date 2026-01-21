@@ -10,6 +10,7 @@ import TrackPage from "./pages/track";
 import BusTrackingPage from "./pages/bus-tracking";
 import Complaints from "./pages/complaints";
 import DownloadPage from "./pages/download";
+import RegisterAgency from "./pages/RegisterAgency";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/bus-tracking/:busNumber" element={<BusTrackingPage />} />
               <Route path="/complaints" element={<Complaints />} />
               <Route path="/download" element={<DownloadPage />} />
+              <Route path="/register-agency" element={<RegisterAgency />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
