@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import LeafletMapBuilder from "@/components/LeafletMapBuilder";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BusRoute {
     id: number;
@@ -98,7 +99,7 @@ const RegisterAgency = () => {
         return { routeId, userId, password };
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // Validation: Check if all buses have a plate number
@@ -129,22 +130,56 @@ const RegisterAgency = () => {
         console.log("Agency Registration Complete:");
         console.log(JSON.stringify(registrationData, null, 2));
 
-        // Create a summary for the toast
-        // Create a summary for the toast
-        const credentialSummary = registeredBuses.map(b =>
-            `Bus ${b.plateNumber || b.id}: ID=${b.userId}, Pass=${b.password}`
-        ).join('\n');
+        try {
+            // Store each bus in Supabase
+            const promises = registeredBuses.map(bus => {
+                const stops = bus.stops || [];
+                const start_stop = stops.length > 0 ? stops[0] : null;
+                const end_stop = stops.length > 1 ? stops[stops.length - 1] : null;
+                const middle_stops = stops.length > 2 ? stops.slice(1, -1) : [];
 
-        toast({
-            title: "Registration Successful",
-            description: "Redirecting to success page...",
-            duration: 2000,
-        });
+                return supabase.from('registered_buses' as any).insert({
+                    agency_name: formData.agencyName,
+                    city: formData.city,
+                    plate_number: bus.plateNumber,
+                    route_id: bus.routeId,
+                    user_id: bus.userId,
+                    password: bus.password,
+                    start_stop: start_stop,
+                    end_stop: end_stop,
+                    middle_stops: middle_stops,
+                    bus_route_data: { stops: bus.stops }
+                });
+            });
 
-        // Navigate to success page
-        setTimeout(() => {
-            navigate("/registration-success", { state: registrationData });
-        }, 1000);
+            const results = await Promise.all(promises);
+            const errors = results.filter(r => r.error);
+
+            if (errors.length > 0) {
+                console.error("Supabase Insertion Errors:", errors);
+                // Throw the first error message to be visible in the toast
+                throw new Error(errors[0].error.message || "Database validation failed");
+            }
+
+            toast({
+                title: "Registration Successful",
+                description: "Agency registered and authentication data saved.",
+                duration: 2000,
+            });
+
+            // Navigate to success page
+            setTimeout(() => {
+                navigate("/registration-success", { state: registrationData });
+            }, 1000);
+
+        } catch (error: any) {
+            console.error("Registration Error:", error);
+            toast({
+                title: "Registration Failed",
+                description: error.message || "Could not save to database.",
+                variant: "destructive",
+            });
+        }
     };
 
     return (
